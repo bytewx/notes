@@ -1,15 +1,21 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-#include "file_handler.c"
+#include "notes_handler.h"
 
 #define BUFFER_SIZE 1024
 
 enum {
-    WRITE_TO_FILE = '1',
-    READ_FROM_FILE = '2'
+    CREATE_NOTE = '1',
+    READ_NOTES = '2',
+    CLEAN_NOTES = '3'
 };
 
 int main(void) {
+    NotesList* list = malloc(sizeof(NotesList));
+
+    load_notes(list);
+
     char input[BUFFER_SIZE];
 
     printf("Welcome to Notes!\n");
@@ -19,7 +25,8 @@ int main(void) {
 
         printf("Choose what you want to do: \n"
                "1) Add a note\n"
-               "2) Read current notes\n\n"
+               "2) Read current notes\n"
+               "3) Clean all notes\n\n"
                "Press any key to leave an application.\n\n"
                "Your choice: ");
 
@@ -27,25 +34,33 @@ int main(void) {
 
         int c;
 
-        while ((c = getchar()) != '\n' && c != EOF);
+        while ((c = getchar()) != '\n' && c != EOF) {}
 
         switch (choice[0]) {
-            case WRITE_TO_FILE:
-                printf("Enter what you want to include in your file: ");
+            case CREATE_NOTE:
+                printf("Enter your note: ");
 
                 fgets(input, BUFFER_SIZE, stdin);
 
-                write_to_file(input);
+                write_to_file(input, list);
+
+                printf("New note added!\n");
 
                 break;
-            case READ_FROM_FILE:
+            case READ_NOTES:
                 printf("Your notes: \n\n");
 
-                read_from_file();
+                print_notes(list);
+
+                break;
+            case CLEAN_NOTES:
+                clean_notes(list);
+
+                printf("Notes cleaned.\n\n");
 
                 break;
             default:
-                printf("Invalid choice.\n");
+                printf("Invalid choice.\n\n");
 
                 break;
         }
